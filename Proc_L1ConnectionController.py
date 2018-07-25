@@ -24,7 +24,7 @@ def ChangeStateOfAllL1Routes(TargetState):
         if TargetState == "Connect":
             session.WriteMessageToReservationOutput(reservation_id, "Connect route: " + route.Source + " to:" + route.Target)
             session.ConnectRoutesInReservation(reservation_id, endpoints, routeType)
-        if TargetState == "Disonnect":
+        if TargetState == "Disconnect":
             session.WriteMessageToReservationOutput(reservation_id,
                                                     "DisConnect route: " + route.Source + " to:" + route.Target)
             session.DisconnectRoutesInReservation(reservation_id, endpoints)
