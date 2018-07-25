@@ -1,5 +1,5 @@
 # Setup-L1Connect-SetConfig
-Sample OrchestrationScript for CloudShell
+Sample OrchestrationScript
 
 ## How to package
 C:\[YourDirectory]>zip -r "Setup L1Connect SetConfig 1.0.zip" ./  
