@@ -20,7 +20,7 @@ class WorkConfig:
                 self.input_config(resource.Name, config_path)
 
             # Attributeが取得できないリソースはスキップ
-            except:
+            except CloudShellAPIError:
                 continue
 
     def input_config(self, resource_name, config_path, config_type='running', config_method='override'):
