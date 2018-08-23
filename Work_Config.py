@@ -29,14 +29,12 @@ class WorkConfig:
         :param config_path: コンフィグのパス
         :param config_type: write config to running or startup
         :param config_method: override or append
-        :return:
+        :return: none
         """
-        input_config_details = []
-
-        input_config_details.append(InputNameValue('path', config_path))
-        input_config_details.append(InputNameValue('configuration_type', config_type))
-        input_config_details.append(InputNameValue('restore_method', config_method))
-        input_config_details.append(InputNameValue('vrf_management_name', ''))
+        input_config_details = [InputNameValue('path', config_path),
+                                InputNameValue('configuration_type', config_type),
+                                InputNameValue('restore_method', config_method),
+                                InputNameValue('vrf_management_name', '')]
 
         try:
             self.automation_api.ExecuteCommand(reservationId=self.reservation_id,
