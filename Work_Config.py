@@ -1,6 +1,7 @@
 # coding:utf-8
 from cloudshell.api.cloudshell_api import InputNameValue
 from cloudshell.workflow.orchestration.sandbox import Sandbox
+from cloudshell.api.common_cloudshell_api import CloudShellAPIError
 
 
 class WorkConfig:
@@ -45,7 +46,7 @@ class WorkConfig:
                                                commandInputs=input_config_details)
             self._sandbox_output('Success input config to: ' + resource_name)
 
-        except:
+        except CloudShellAPIError:
             self._sandbox_output('Failed input config to: ' + resource_name)
 
     # "Sandbox"の"Output"上にテキストを表示
