@@ -8,20 +8,37 @@ class WorkConfig:
     def __init__(self):
         self.sandbox = Sandbox()
         self.automation_api = self.sandbox.automation_api
+        self.blueprint = self.automation_api.ActivateTopology
         self.reservation_id = self.sandbox.reservationContextDetails.id
         self.reservation_details = self.automation_api.GetReservationDetails(self.reservation_id)
         self.reservation_description = self.reservation_details.ReservationDescription
+        self._FIRST_ONE = 0
 
     def input_config_all(self, config_attribute):
-        for resource in self.reservation_description.Resources:
-            # コンフィグのパスを取得
-            try:
-                config_path = self.automation_api.GetAttributeValue(resource.Name, config_attribute).Value
-                self.input_config(resource.Name, config_path)
+        # Reserve直後のSetupは、BlueprintのAttributeを使用
+        if self.reservation_description.Status == 'Started':
+            blueprint_name = self.reservation_description.TopologiesInfo[self._FIRST_ONE].Name
+            for blueprint_resource in self.blueprint(self.reservation_id, blueprint_name).Resources:
+                resource_attributes = blueprint_resource.ResourceAttributes
+                try:
+                    attribute_index = list(map(lambda x: x.Name, resource_attributes)).index(config_attribute)
+                    config_path = resource_attributes[attribute_index].Value
+                    self.input_config(blueprint_resource.Name, config_path)
 
-            # Attributeが取得できないリソースはスキップ
-            except CloudShellAPIError:
-                continue
+                except ValueError:
+                    continue
+
+        # Active以降の手動Setupは、SandboxのAttributeを使用
+        else:
+            for resource in self.reservation_description.Resources:
+                # コンフィグのパスを取得
+                try:
+                    config_path = self.automation_api.GetAttributeValue(resource.Name, config_attribute).Value
+                    self.input_config(resource.Name, config_path)
+
+                # Attributeが取得できないリソースはスキップ
+                except CloudShellAPIError:
+                    continue
 
     def input_config(self, resource_name, config_path, config_type='running', config_method='override'):
         """
@@ -47,7 +64,7 @@ class WorkConfig:
         except CloudShellAPIError:
             self._sandbox_output('Failed input config to: ' + resource_name)
 
-    # "Sandbox"の"Output"上にテキストを表示
+    # SandboxのOutput上にテキストを表示
     def _sandbox_output(self, text):
         """
         :param text: Output上に表示させるテキスト
